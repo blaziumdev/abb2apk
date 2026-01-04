@@ -28,6 +28,10 @@ Optional:
   --java <path>               Path to java executable (auto-detected if not specified)
   -v, --verbose               Verbose output
   -q, --quiet                 Quiet mode (errors only)
+  --list-tools                List detected tools (Java, bundletool) and exit
+  --time                      Show conversion timing information
+  --check, --validate         Validate configuration and inputs only (no conversion)
+  --json-output               Output results in JSON format
   -h, --help                  Show this help message
   --version                   Show version information
 
@@ -108,6 +112,10 @@ Config ConfigParser::parse(int argc, char* argv[]) {
         if (arg == "--version") {
             print_version();
             std::exit(0);
+        }
+
+        if (arg == "--list-tools") {
+            config.list_tools = true;
         }
 
         if (arg == "-i" || arg == "--input") {
@@ -210,6 +218,15 @@ Config ConfigParser::parse(int argc, char* argv[]) {
         else if (arg == "-q" || arg == "--quiet") {
             config.quiet = true;
         }
+        else if (arg == "--time") {
+            config.show_timing = true;
+        }
+        else if (arg == "--check" || arg == "--validate") {
+            config.check_only = true;
+        }
+        else if (arg == "--json-output") {
+            config.json_output = true;
+        }
         else {
             std::cerr << "Error: Unknown argument: " << arg << "\n";
             print_usage(argv[0]);
@@ -241,7 +258,8 @@ Config ConfigParser::parse(int argc, char* argv[]) {
         config.java_path = java->string();
     }
 
-    if (!validate_config(config)) {
+    // Skip validation if --list-tools is set (no input file needed)
+    if (!config.list_tools && !validate_config(config)) {
         std::exit(1);
     }
 

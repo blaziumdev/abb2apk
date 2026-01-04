@@ -25,6 +25,10 @@ struct Config {
     std::optional<SigningConfig> signing;
     bool verbose = false;
     bool quiet = false;
+    bool list_tools = false;
+    bool show_timing = false;
+    bool check_only = false;
+    bool json_output = false;
     std::string bundletool_path;
     std::string java_path;
 };
